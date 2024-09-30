@@ -82,12 +82,90 @@ app.post('/chatWithNPC', async (req, res) => {
     });
 
     console.log('NPC reply:', response.data);
-    res.json({ reply: response.data.reply });
+    res.json({ reply: response.data });
   } catch (error) {
     console.error('Error chatting with NPC:', error);
     res.status(500).json({ error: 'Error chatting with NPC' });
   }
+}); 
+/* app.get('/chatWithNPC', (req, res) => {
+    console.log('chatWithNPC:', req.query);
+    const { character_id, game_id, session_id, message } = req.query;
+  
+    // Set headers for SSE
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+  
+    // Function to send SSE messages
+    const sendSSE = (data) => {
+      res.write(`${JSON.stringify(data)}\n\n`);
+    };
+  
+    // Simulate a delay and continuous message flow (this would come from your API in real use case)
+    const sendMessages = async () => {
+      try {
+        message_id = generateMessageId();
+        // First, send the user's message to the API
+        const response = await axios.post(`${baseURL}/chatsse`, {
+          character_id,
+          game_id,
+          message,
+          message_id,
+          session_id
+        }, {
+          headers: {
+            'accept': 'application/json',
+            'Authorization': authorizationToken,
+            'Content-Type': 'application/json'
+          }
+        });
+  
+        // Send the response from the API
+        sendSSE(response.data);
+  
+        // Simulate another message (could be an additional NPC response or event)
+        setTimeout(() => {
+          sendSSE({ reply: "Another NPC message!" });
+        }, 3000); // Simulate delay
+      } catch (error) {
+        console.error('Error chatting with NPC:', error);
+        res.write('data: {"error": "Error occurred while chatting with NPC"}\n\n');
+        res.end();
+      }
+    };
+  
+    // Start sending messages
+    sendMessages();
+  
+    // Keep the connection alive for multiple messages
+    req.on('close', () => {
+      res.end();
+    });
+  }); */
+
+// Resume session API
+app.post('/resumeSession', async (req, res) => {
+    const { game_id, session_id } = req.body;
+  
+    try {
+      const response = await axios.post(`${baseURL}/resumesession`, {
+        game_id,
+        session_id
+      }, {
+        headers: {
+          'accept': 'application/json',
+          'Authorization': authorizationToken, // Replace with your actual authorization
+          'Content-Type': 'application/json'
+        }
+      });
+      res.json(response.data); // Return the resume session data back to the client
+    } catch (error) {
+      console.error('Error resuming session:', error);
+      res.status(500).json({ error: 'Error resuming session' });
+    }
 });
+  
 
 // 生成唯一的 message_id 方法
 function generateMessageId() {

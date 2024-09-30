@@ -61,9 +61,18 @@
         </div>
     </div>
 
+    <!-- Input for session_id -->
+    <div class="mb-3">
+        <label for="session-id-input" class="form-label">Enter Previous Session ID:</label>
+        <input type="text" id="session-id-input" class="form-control" placeholder="Enter your session ID">
+    </div>
+      
+    <!-- Resume Session Button -->
+    <button id="resume-session-btn" class="btn btn-warning mb-3">Resume Session</button>
+  
     <!-- Start Game Button -->
-    <button id="start-game-btn" class="btn btn-success mb-3">Start Game</button>
-
+    <button id="start-game-btn" class="btn btn-success mb-3">Start New Game</button>
+  
     <!-- NPC Avatar Section -->
     <div id="npc-container" class="npc-container"></div>
 
@@ -82,7 +91,8 @@
     const game_id = "7411057c-43a0-4fbb-b4b8-f0b02ba3cb02";
     let selectedCharacterId = null;
     let messageHistory = [];
-    
+    let eventSource = null;
+
     // 页面加载时调用获取游戏详情接口
     window.onload = async () => {
       try {
@@ -120,10 +130,41 @@
       `;
     }
 
+    // Resume Session Logic
+    document.getElementById('resume-session-btn').addEventListener('click', async () => {
+      const inputSessionId = document.getElementById('session-id-input').value;
+      if (!inputSessionId) {
+        alert('Please enter a valid session ID');
+        return;
+      }
+
+      session_id = inputSessionId;
+      console.log('Resuming session with session_id:', session_id);  // For debugging
+
+      try {
+        // Call the backend to resume the session
+        const resumeSessionResponse = await fetch('http://localhost:3000/resumeSession', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ game_id, session_id })
+        });
+
+        const resumeData = await resumeSessionResponse.json();
+        console.log('Session Resumed:', resumeData);
+
+        // Display NPCs or handle session resume logic
+      } catch (error) {
+        console.error('Error resuming session:', error);
+      }
+    });
+
     // 监听"Start Game"按钮点击
     document.getElementById('start-game-btn').addEventListener('click', async () => {
       try {
         session_id = 'ses_' + Math.random().toString(36).substr(2, 9);
+        console.log('Starting new game with session_id:', session_id);  // For debugging
         // 调用开始游戏接口
         const startGameResponse = await fetch('http://localhost:3000/startGame', {
           method: 'POST',
@@ -172,7 +213,29 @@
       messageHistory.push({ role: 'user', content: userInput });
       document.getElementById('user-input').value = ''; // clear input field
 
-      try {
+/*       console.log('Sending message to NPC:', userInput);
+      // 关闭现有的 EventSource 连接（如果存在）
+      if (eventSource) {
+        eventSource.close();
+      }
+
+      // 创建新的 EventSource 连接
+      eventSource = new EventSource(`http://localhost:3000/chatWithNPC?character_id=${selectedCharacterId}&game_id=${game_id}&session_id=${session_id}&message=${encodeURIComponent(userInput)}`);
+      
+      // 监听事件
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log('NPC Response:', data);
+        appendMessage('npc', data.reply); // 记录NPC的回复
+        messageHistory.push({ role: 'npc', content: data.reply });
+      };
+
+      eventSource.onerror = (error) => {
+        console.error('Error receiving SSE messages:', error);
+        eventSource.close(); // 关闭 SSE 连接
+      }; */
+
+       try {
         // send message to NPC
         message = userInput
         console.log('Sending message to NPC:', message);
@@ -197,7 +260,7 @@
       } catch (error) {
         console.error('Error chatting with NPC:', error);
         appendMessage('npc', 'Error occurred while chatting with NPC');
-      }
+      } 
     });
 
     // 将消息追加到对话框中
