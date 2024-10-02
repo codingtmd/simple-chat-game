@@ -132,7 +132,7 @@
     window.onload = async () => {
       try {
         console.log('Fetching game details...');
-        const gameDetailsResponse = await fetch('http://localhost:3000/getGameDetails', {
+        const gameDetailsResponse = await fetch('https://simple-chat-game-1089107932175.us-central1.run.app/getGameDetails', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -178,7 +178,7 @@
 
       try {
         // Call the backend to resume the session
-        const resumeSessionResponse = await fetch('http://localhost:3000/resumeSession', {
+        const resumeSessionResponse = await fetch('https://simple-chat-game-1089107932175.us-central1.run.app/resumeSession', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -205,7 +205,7 @@
 
         console.log('Starting new game with session_id:', session_id);  // For debugging
 
-        const startGameResponse = await fetch('http://localhost:3000/startGame', {
+        const startGameResponse = await fetch('https://simple-chat-game-1089107932175.us-central1.run.app/startGame', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -260,7 +260,7 @@
 
         const character_id = selectedCharacterId;
         console.log("params:", { character_id, game_id, session_id, message });
-        const response = await fetch('http://localhost:3000/chatWithNPC', {
+        const response = await fetch('https://simple-chat-game-1089107932175.us-central1.run.app/chatWithNPC', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
