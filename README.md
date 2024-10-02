@@ -1,7 +1,8 @@
 # simple-chat-game
 A simple game implementation with RPGGO Zagii Engine. So easy to make a interactive game!
 
-![Screenshot 2024-09-30 171901](https://github.com/user-attachments/assets/d801d7b8-06d7-42e1-92f9-349626b257e3)
+![Screenshot 2024-10-02 135707](https://github.com/user-attachments/assets/44ec7d5d-8b27-43e0-9bd4-75fe03ea9241)
+
 
 ## First of First
 Before you start to write code, 
@@ -11,7 +12,7 @@ Before you start to write code,
 After that, you will have full permission to build the UI experience on top of RPGGO engine.
 
 ## Demo
-
+[click me](https://simple-chat-game-1089107932175.us-central1.run.app)
 
 ## File structure
 
@@ -33,12 +34,25 @@ simple-chat-game/
 npm install express axios cors
 ```
 
-- make sure you put your api key in the right place. You need to add it in rpggo.js. 
+- make sure you put your api key in the right place. You need to add it in rpggo.js or use .env file
+  
+![Screenshot 2024-10-02 143216](https://github.com/user-attachments/assets/8285bb4f-26c4-422e-a697-fdcee0c92619)
+
+
+or use .env file
+![Screenshot 2024-10-02 143118](https://github.com/user-attachments/assets/4804737d-a97b-46bc-8acb-f51cd7262fd2)
 
 
 - start the server
+
+if you don't use .env, run
 ```
 node server/app.js
+```
+
+if you does use .env, run 
+```
+node --env-file=.env server/app.js
 ```
 
 - open the http://localhost:3000 in your broswer. Here you go!
