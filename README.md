@@ -38,12 +38,14 @@ simple-chat-game/
 
 - make sure you put your api key in the right place. You need to add it in rpggo.js
   
-  ![Screenshot 2024-10-02 143216](https://github.com/user-attachments/assets/8285bb4f-26c4-422e-a697-fdcee0c92619)
+  ![Screenshot 2024-10-02 143216](https://github.com/user-attachments/assets/1c10a743-6597-4858-a646-d12e64166998)
+
 
 
   or use .env file
   
-  ![Screenshot 2024-10-02 143118](https://github.com/user-attachments/assets/4804737d-a97b-46bc-8acb-f51cd7262fd2)
+
+  ![Screenshot 2024-10-02 143118](https://github.com/user-attachments/assets/4dd0f9d5-9a1d-46d6-aeaa-c6215a208dfd)
 
 
 - start the server
