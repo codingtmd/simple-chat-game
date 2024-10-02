@@ -19,9 +19,7 @@
     }
     .game-details img {
       width: 200px;
-      /* 设置图片宽度为200px */
       height: auto;
-      /* 高度自动调整以保持图片比例 */
     }
 
     .chat-box {
@@ -77,6 +75,10 @@
     .npc-avatar.selected {
       border: 2px solid #007bff;
     }
+    .session-info {
+      margin-top: 10px;
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -102,6 +104,9 @@
     <!-- Start Game Button -->
     <button id="start-game-btn" class="btn btn-success mb-3">Start New Game</button>
 
+    <!-- New session info section -->
+    <div id="session-info" class="session-info"></div>
+
     <!-- NPC Avatar Section -->
     <div id="npc-container" class="npc-container"></div>
 
@@ -116,13 +121,14 @@
   </div>
 
   <script>
-    let session_id = null; // 使用你的 session_id
-    const game_id = "7411057c-43a0-4fbb-b4b8-f0b02ba3cb02";
+    let session_id = null; 
+    // user your authorized game id here, otherwise it will throw out an error
+    const game_id = "7411057c-43a0-4fbb-b4b8-f0b02ba3cb02"; 
     let selectedCharacterId = null;
     let selectedCharacterName = null;
     let selectedCharacterAvatar = null;
 
-    // 页面加载时调用获取游戏详情接口
+    // load the game details when the page loads
     window.onload = async () => {
       try {
         console.log('Fetching game details...');
@@ -138,7 +144,7 @@
         displayGameDetails(gameDetails);
         console.log('Game Details:', gameDetails);
 
-        // 显示NPC头像
+        // display npc avatar
         npcs = gameDetails.chapters[0].characters
         console.log('NPC Details:', npcs);
         loadNPCs(npcs || []);
@@ -148,7 +154,7 @@
       }
     };
 
-    // 显示游戏详情
+    // Display game details
     function displayGameDetails(gameDetails) {
       const gameInfoDiv = document.getElementById('game-info');
       gameInfoDiv.innerHTML = `
@@ -182,23 +188,23 @@
 
         const resumeData = await resumeSessionResponse.json();
         console.log('Session Resumed:', resumeData);
-
-        // Display NPCs or handle session resume logic
+        document.getElementById('session-info').innerText = `Session ID: ${session_id}`;
       } catch (error) {
         console.error('Error resuming session:', error);
       }
     });
 
-    // 监听"Start Game"按钮点击
+    // Start Game
     document.getElementById('start-game-btn').addEventListener('click', async () => {
       try {
         session_id = document.getElementById('session-id-input').value;
         if (!session_id) {
           session_id = 'ses_' + Math.random().toString(36).substr(2, 9);
+          document.getElementById('session-info').innerText = `Session ID: ${session_id}`;
         }
 
         console.log('Starting new game with session_id:', session_id);  // For debugging
-        // 调用开始游戏接口
+
         const startGameResponse = await fetch('http://localhost:3000/startGame', {
           method: 'POST',
           headers: {
@@ -270,7 +276,7 @@
         const res = await response.json();
         console.log('NPC Response:', res);
         const npcReply = res.text || 'NPC did not respond';
-        appendNPCMessage(npcReply); // 记录NPC回复
+        appendNPCMessage(npcReply);
       } catch (error) {
         console.error('Error chatting with NPC:', error);
         appendNPCMessage('Error occurred while chatting with NPC');
@@ -280,44 +286,6 @@
       document.getElementById('user-input').value = '';
     });
 
-    /*  try {
-            // send message to NPC
-            message = userInput
-            console.log('Sending message to NPC:', message);
-            const response = await fetch('http://localhost:3000/chatWithNPC', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                character_id: selectedCharacterId,
-                game_id,
-                session_id,
-                message
-              })
-            });
-    
-            const res = await response.json();
-            console.log('NPC Response:', res);
-            const npcReply = res.data.result.text || 'NPC did not respond';
-            appendMessage('npc', npcReply); // 记录NPC回复
-            messageHistory.push({ role: 'npc', content: npcReply });
-          } catch (error) {
-            console.error('Error chatting with NPC:', error);
-            appendMessage('npc', 'Error occurred while chatting with NPC');
-          } 
-        }); */
-
-    // 将消息追加到对话框中
-    function appendMessage(sender, message) {
-      const chatBox = document.getElementById('chat-box');
-      const messageDiv = document.createElement('div');
-      messageDiv.classList.add('message', sender);
-      messageDiv.textContent = message;
-      chatBox.appendChild(messageDiv);
-      chatBox.scrollTop = chatBox.scrollHeight; // 滚动到底部
-    }
-    
     // Function to append NPC messages to the chat box
     function appendNPCMessage(message) {
       const chatBox = document.getElementById('chat-box');

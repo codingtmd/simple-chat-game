@@ -3,7 +3,17 @@ const axios = require('axios');
 
 // Base URL and Authorization token
 const baseURL = 'https://api.rpggo.ai/v2/open/game';
-const authorizationToken = '';  // Replace with your real token
+const authorizationToken = '';  // !!!!!Replace with your real token
+
+
+// Utility function to generate a unique message ID
+function getAuthTokken() {
+    if (authorizationToken !== '') {
+        return authorizationToken
+    }
+
+    return process.env.AuthToken;
+}
 
 
 // Function to get details of a game
@@ -14,7 +24,7 @@ async function getGameDetails(game_id) {
         }, {
             headers: {
                 'accept': 'application/json',
-                'Authorization': authorizationToken,
+                'Authorization': getAuthTokken(),
                 'Content-Type': 'application/json'
             }
         });
@@ -35,7 +45,7 @@ async function startGame(game_id, session_id) {
         }, {
             headers: {
                 'accept': 'application/json',
-                'Authorization': authorizationToken,
+                'Authorization': getAuthTokken(),
                 'Content-Type': 'application/json'
             }
         });
@@ -55,7 +65,7 @@ async function resumeSession(game_id, session_id) {
         }, {
             headers: {
                 'accept': 'application/json',
-                'Authorization': authorizationToken,
+                'Authorization': getAuthTokken(),
                 'Content-Type': 'application/json'
             }
         });
@@ -79,7 +89,7 @@ async function chatWithNPC(character_id, game_id, message, session_id) {
         }, {
             headers: {
                 'accept': 'application/json',
-                'Authorization': authorizationToken,
+                'Authorization': getAuthTokken(),
                 'Content-Type': 'application/json'
             }
         });
@@ -101,7 +111,7 @@ function parseMessages(raw_messages){
             start_index = data_array[i].indexOf("{");
             last_index = data_array[i].lastIndexOf("}");
             sub_str = data_array[i].substring(start_index, last_index + 1);
-            //console.log('sub_str:', sub_str);   
+   
             var json_obj = JSON.parse(sub_str);
             if (json_obj.data.result.character_type == "common_npc") {
                 return json_obj.data.result;
@@ -110,53 +120,6 @@ function parseMessages(raw_messages){
     }
     return "{'text': 'No NPC response'}";
 }
-
-
-/* // Function to chat with an NPC and stream SSE messages
-function chatWithNPC(character_id, game_id, message, session_id, res) {
-    let message_id= generateMessageId();
-    const url = `${baseURL}/chatsse?character_id=${character_id}&game_id=${game_id}&message=${encodeURIComponent(message)}&session_id=${session_id}&message_id=${message_id}`;
-
-    console.log('SSE URL:', url);
-    const eventSource = new EventSource(url, {
-        headers: {
-            'Authorization': authorizationToken,
-            'Content-Type': 'application/json',
-        },
-    });
-
-    // Set up headers for SSE response
-    res.setHeader('Connection', 'keep-alive');
-
-    // On receiving a message
-    eventSource.onmessage = (event) => {
-        console.log('Received message from NPC:', event.data);
-        const data = JSON.parse(event.data);
-        
-        // Send the message as SSE to the client
-        res.write(`data: ${JSON.stringify(data)}\n\n`);
-
-        // If the message signifies the end of the conversation
-        if (data.isFinalMessage) {
-            eventSource.close();
-            res.end();
-        }
-    };
-
-    // Handle connection errors
-    eventSource.onerror = (error) => {
-        console.error('Error with SSE connection:', error);
-        eventSource.close();
-        res.write('data: {"error": "Error with SSE connection"}\n\n');
-        res.end();
-    };
-
-    // Keep the connection alive until all messages are received
-    res.on('close', () => {
-        eventSource.close();
-        res.end();
-    });
-} */
 
 
 // Utility function to generate a unique message ID

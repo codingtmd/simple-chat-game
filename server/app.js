@@ -1,5 +1,4 @@
 const express = require('express');
-const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
 const rpggo = require('./rpggo');
@@ -11,7 +10,7 @@ app.use(cors());
 // Enable serving static files
 app.use(express.static(path.join(__dirname, '../public')));
 
-// 获取游戏详情
+// Fetch Game Metadata
 app.post('/getGameDetails', async (req, res) => {
   const { game_id } = req.body;
 
@@ -37,20 +36,6 @@ app.post('/startGame', async (req, res) => {
   }
 });
 
-/* // Chat with NPC
-app.post('/chatWithNPC', async (req, res) => {
-  const { character_id, game_id, session_id, message } = req.body;
-
-  try {
-    const chatData = await rpggo.chatWithNPC(character_id, game_id, message, session_id);
-    console.log('NPC reply:', response.data);
-    res.json(chatData);
-
-  } catch (error) {
-    console.error('Error chatting with NPC:', error);
-    res.status(500).json({ error: 'Error chatting with NPC' });
-  }
-}); */
 
 // Chat with NPC using SSE Endpoint
 app.post('/chatWithNPC', async (req, res) => {
