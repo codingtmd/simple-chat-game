@@ -54,7 +54,8 @@ app.post('/chatWithNPC', async (req, res) => {
 
 // Chat with NPC using SSE Endpoint
 app.post('/chatWithNPC', async (req, res) => {
-  const { character_id, game_id, message, session_id } = req.query;
+  const { character_id, game_id, message, session_id } = req.body;
+  console.log('Chat with NPC:', req.body);
   
   try {
     const chatData = await rpggo.chatWithNPC(character_id, game_id, message, session_id);

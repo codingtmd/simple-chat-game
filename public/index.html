@@ -17,7 +17,6 @@
       margin-bottom: 20px;
       background-color: #fff;
     }
-
     .game-details img {
       width: 200px;
       /* 设置图片宽度为200px */
@@ -35,16 +34,33 @@
 
     .message {
       margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 60%;
     }
-
     .message.user {
+      background-color: #d1e7dd;
       text-align: right;
+      margin-left: auto;
     }
-
     .message.npc {
+      background-color: #f8d7da;
       text-align: left;
     }
-
+    .npc-message {
+      display: flex;
+      align-items: flex-start;
+    }
+    .npc-avatar-in-message {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .npc-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
     .npc-avatar {
       width: 50px;
       height: 50px;
@@ -103,7 +119,8 @@
     let session_id = null; // 使用你的 session_id
     const game_id = "7411057c-43a0-4fbb-b4b8-f0b02ba3cb02";
     let selectedCharacterId = null;
-    let messageHistory = [];
+    let selectedCharacterName = null;
+    let selectedCharacterAvatar = null;
 
     // 页面加载时调用获取游戏详情接口
     window.onload = async () => {
@@ -213,11 +230,13 @@
           document.querySelectorAll('.npc-avatar').forEach(avatar => avatar.classList.remove('selected'));
           npcAvatar.classList.add('selected');
           selectedCharacterId = npc.id;  // select NPC
+          selectedCharacterName = npc.name;
+          selectedCharacterAvatar = npc.avatar;
           console.log('Selected NPC:', selectedCharacterId);
         });
 
         npcContainer.appendChild(npcAvatar);
-      });
+      }); 
     }
 
     // monitor user input and send message to NPC
@@ -225,21 +244,23 @@
       const userInput = document.getElementById('user-input').value;
       if (!userInput || !selectedCharacterId) return alert('Please select an NPC and enter a message.');
 
-      appendMessage('user', userInput); // user input
-      messageHistory.push({ role: 'user', content: userInput });
+      appendUserMessage(userInput);
       document.getElementById('user-input').value = ''; // clear input field
 
       try {
         // send message to NPC
         message = userInput
         console.log('Sending message to NPC:', message);
+
+        const character_id = selectedCharacterId;
+        console.log("params:", { character_id, game_id, session_id, message });
         const response = await fetch('http://localhost:3000/chatWithNPC', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            character_id: selectedCharacterId,
+            character_id,
             game_id,
             session_id,
             message
@@ -249,11 +270,10 @@
         const res = await response.json();
         console.log('NPC Response:', res);
         const npcReply = res.text || 'NPC did not respond';
-        appendMessage('npc', npcReply); // 记录NPC回复
-        messageHistory.push({ role: 'npc', content: npcReply });
+        appendNPCMessage(npcReply); // 记录NPC回复
       } catch (error) {
         console.error('Error chatting with NPC:', error);
-        appendMessage('npc', 'Error occurred while chatting with NPC');
+        appendNPCMessage('Error occurred while chatting with NPC');
       }
 
       // Clear the input box
@@ -296,6 +316,33 @@
       messageDiv.textContent = message;
       chatBox.appendChild(messageDiv);
       chatBox.scrollTop = chatBox.scrollHeight; // 滚动到底部
+    }
+    
+    // Function to append NPC messages to the chat box
+    function appendNPCMessage(message) {
+      const chatBox = document.getElementById('chat-box');
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message', 'npc', 'npc-message');
+
+      messageDiv.innerHTML = `
+        <img src="${selectedCharacterAvatar}" alt="${selectedCharacterName}" class="npc-avatar-in-message">
+        <div>
+          <div class="npc-name">${selectedCharacterName}</div>
+          ${message}
+        </div>
+      `;
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Function to append user messages to the chat box
+    function appendUserMessage(message) {
+      const chatBox = document.getElementById('chat-box');
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message', 'user');
+      messageDiv.textContent = message;
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
   </script>
 </body>

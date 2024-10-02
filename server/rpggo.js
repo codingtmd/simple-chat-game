@@ -69,11 +69,12 @@ async function resumeSession(game_id, session_id) {
 // Function to chat with an NPC
 async function chatWithNPC(character_id, game_id, message, session_id) {
      try {
+        const message_id = generateMessageId();
         const response = await axios.post(`${baseURL}/chatsse`, {
             character_id,
             game_id,
             message,
-            message_id: generateMessageId(),
+            message_id,
             session_id
         }, {
             headers: {
