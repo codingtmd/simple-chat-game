@@ -18,13 +18,13 @@ After that, you will have full permission to build the UI experience on top of R
 
 ### File structure
 
-simple-chat-game/
-├── public/                # Static files (e.g., index.html)
-├── server/                # Backend server folder
-│   ├── rpggo.js           # The API Wrapper to deal with RPGGO http interface. You can reuse it if you like
-│   └── app.js             # Main server file
-├── node_modules/          # npm modules (after installation)
-└── package.json           # Dependencies and scripts
+simple-chat-game/ <br>
+├── public/                # Static files (e.g., index.html) <br>
+├── server/                # Backend server folder <br>
+│   ├── rpggo.js           # The API Wrapper to deal with RPGGO http interface. You can reuse it if you like <br>
+│   └── app.js             # Main server file <br>
+├── node_modules/          # npm modules (after installation) <br>
+└── package.json           # Dependencies and scripts <br>
 
 
 
